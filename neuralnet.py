@@ -14,6 +14,8 @@ class Perceptron(object):
                 weights.append[1.0]
             self.set_random_weights()
         else:
+            if len(weights) != self.in_size:
+                raise ArgLenError(weights, self.in_size) #not exactly an appropriate place to use this exception but we should at least raise something
             self.weights = weights
             
     def get_weighted_sum(self, input_acts):
@@ -50,7 +52,7 @@ class Perceptron(object):
         input_w_bias = input_acts.copy()
         input_w_bias.insert(0, 1)
 
-        if (len(input_acts) != len(self.weights)):
+        if (len(input_w_bias) != len(self.weights)):
             raise ArgLenError(input_w_bias, self.weights)
         
         total_mod = 0
