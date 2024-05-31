@@ -9,6 +9,7 @@ class TestNeuralNet(unittest.TestCase):
         self.test_sigmoid_deriv()
         self.test_sigmoid_activ_deriv()
         self.test_update_weights()
+        self.test_feed_forward()
 
     def test_weighted_sum(self):
         '''Tests for weighted_sum'''
@@ -81,7 +82,31 @@ class TestNeuralNet(unittest.TestCase):
                 test_percep.update_weights(test_acts[i], test_alpha, test_deltas[i])
                 self.assertCountEqual(test_percep.weights, test_sol[i])
 
-    
+    def test_feed_forward(self):
+        '''Test for feed_forward'''
+        test_acts = [1, 0, -1]
+        hidden_weight = [1, 2, -1, 0.5] #using the same weights for the two hidden perceptrons
+        output_weights = [[1, 1, 1], [1, 0, -1], [-1, -1, -1]] #using different weights for three output perceptrons
+        test_net = NeuralNet([3, 2, 3], False)
+        for percep in test_net.hidden_layers[0]:
+            if (len(percep.weights) != len(hidden_weight)):
+                raise(ArgLenError(percep.weights, hidden_weight))
+            percep.weights = hidden_weight
+        for i in range(len(test_net.output_layer)):
+            if (len(test_net.output_layer[i].weights) != len(output_weights)):
+                raise(ArgLenError(test_net.output_layer[i].weights, output_weights))
+            test_net.output_layer[i].weights = output_weights[i]
+
+        test_sol = [[1, 0, -1], [2.5, 2.5], [6, -1.5, -6]]
+
+        #beginning of test
+        feed_forward_results = test_net.feed_forward(test_acts)
+        #cleaning up the results
+        for output_list in feed_forward_results:
+            for output in output_list:
+                output = round(output, 6) #floating point numbers suck to deal with
+
+        self.assertCountEqual(feed_forward_results, test_sol)
         
 unittest.main()
 

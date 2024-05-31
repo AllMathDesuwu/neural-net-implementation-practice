@@ -11,4 +11,4 @@ class ArgLenError(Exception):
     def __init__(self, iterable1, iterable2):
         iterable1_name = get_name(iterable1)
         iterable2_name = get_name(iterable2)
-        super.__init__("Iterable {} is of length {} while iterable {} is of length {}".format(iterable1_name, str(len(iterable1)), iterable2_name, str(len(iterable2))))
+        super().__init__("Iterable {} is of length {} while iterable {} is of length {}".format(iterable1_name, str(len(iterable1)), iterable2_name, str(len(iterable2))))
