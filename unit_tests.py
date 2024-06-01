@@ -98,6 +98,12 @@ class TestNeuralNet(unittest.TestCase):
             test_net.output_layer[i].weights = output_weights[i]
 
         test_sol = [[1, 0, -1], [0.924142, 0.924142], [0.945230, 0.518955, 0.054770]]
+        '''
+            true values should be as follows:
+            [[1, 0, -1], 
+            [0.9241418199787566, 0.9241418199787566], 
+            [0.9452298941105748, 0.51895545600371, 0.05477010588942533]]
+        '''
 
         #beginning of test
         feed_forward_results = test_net.feed_forward(test_acts)
@@ -107,6 +113,31 @@ class TestNeuralNet(unittest.TestCase):
                 output_list[i] = round(output_list[i], 6) #floating point numbers suck to deal with
 
         self.assertCountEqual(feed_forward_results, test_sol)
+
+    def test_backpropagation(self):
+        '''Test for backpropagation'''
+        test_example = [([1, 0, -1], [1, 1, 1])]
+        hidden_weight = [1, 2, -1, 0.5] #using the same weights for the two hidden perceptrons
+        output_weights = [[1, 1, 1], [1, 0, -1], [-1, -1, -1]] #using different weights for three output perceptrons
+        test_net = NeuralNet([3, 2, 3], False)
+        for percep in test_net.hidden_layers[0]:
+            if (len(percep.weights) != len(hidden_weight)):
+                raise(ArgLenError(percep.weights, hidden_weight))
+            percep.weights = hidden_weight
+        for i in range(len(test_net.output_layer)):
+            if (len(test_net.output_layer[i].weights) != len(output_weights)):
+                raise(ArgLenError(test_net.output_layer[i].weights, output_weights))
+            test_net.output_layer[i].weights = output_weights[i]
+
+        test_error, test_weight_change = test_net.backpropagation(test_example, 0.1)
+        for i in range(len(test_net.hidden_layers[0])):
+            print("Hidden layer perceptron {} weights: ".format(i))
+            print(test_net.hidden_layers[0][i].weights)
+            print("")
+        for i in range(len(test_net.output_layer)):
+            print("Output layer perceptron {} weights: ".format(i))
+            print(test_net.output_layer[i].weights)
+            print("")
         
 unittest.main()
 

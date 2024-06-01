@@ -136,10 +136,10 @@ class NeuralNet(object):
 
             output_delta = list()
             for output_entry_num in range(len(example[1])):
-                deriv = self.output_layer[output_entry_num].sigmoid_activation_deriv(all_layer_output[-1])
+                deriv = self.output_layer[output_entry_num].sigmoid_activation_derivative(all_layer_output[-1])
                 error = example[1][output_entry_num] - last_layer_output[output_entry_num]
                 delta = deriv * error
-                average_error += 0.5 * error * error
+                avg_error += 0.5 * error * error
                 output_delta.append(delta)
             deltas.append(output_delta)
 
@@ -149,12 +149,12 @@ class NeuralNet(object):
                 next_layer = self.layers[layer_num + 1]
 
                 for hidden_neuron_num in range(len(curr_layer)):
-                    deriv = curr_layer[hidden_neuron_num].sigmoid_activation_deriv(all_layer_output[layer_num])
+                    deriv = curr_layer[hidden_neuron_num].sigmoid_activation_derivative(all_layer_output[layer_num])
                     pseudo_error = 0
                     for i in range(len(next_layer)):
                         pseudo_error += deltas[0][i] * next_layer[i].weights[hidden_neuron_num + 1] #add 1 because bias weight is always in first position-- so 0th neuron gets 1st weight
                     delta = deriv * error
-                    average_error += 0.5 * error * error
+                    avg_error += 0.5 * error * error
                     layer_deltas.append(delta)
 
                 deltas = [layer_deltas] + deltas
