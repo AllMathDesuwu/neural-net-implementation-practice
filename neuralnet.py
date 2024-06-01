@@ -101,19 +101,14 @@ class NeuralNet(object):
         self.layers = layers
 
     def feed_forward(self, input_acts):
-        print("hidden layers:")
-        print(self.hidden_layers)
         return_list = list()
         return_list.append(input_acts)
-        print(return_list[-1])
 
         #first work on our hidden layers
         for layer in self.hidden_layers:
             input_list = return_list[-1] #always use the most recently added list of activations-- remember, the output of the first hidden layer is the input of the second hidden layer
             output_list = list()
             for perceptron in layer:
-                print(return_list)
-                print("uwu")
                 output_list.append(perceptron.sigmoid_activation_function(input_list))
             return_list.append(output_list)
 

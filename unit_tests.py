@@ -97,14 +97,14 @@ class TestNeuralNet(unittest.TestCase):
                 raise(ArgLenError(test_net.output_layer[i].weights, output_weights))
             test_net.output_layer[i].weights = output_weights[i]
 
-        test_sol = [[1, 0, -1], [2.5, 2.5], [6, -1.5, -6]]
+        test_sol = [[1, 0, -1], [0.924142, 0.924142], [0.945230, 0.518955, 0.054770]]
 
         #beginning of test
         feed_forward_results = test_net.feed_forward(test_acts)
         #cleaning up the results
         for output_list in feed_forward_results:
-            for output in output_list:
-                output = round(output, 6) #floating point numbers suck to deal with
+            for i in range(len(output_list)):
+                output_list[i] = round(output_list[i], 6) #floating point numbers suck to deal with
 
         self.assertCountEqual(feed_forward_results, test_sol)
         
