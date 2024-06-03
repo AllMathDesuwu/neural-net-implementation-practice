@@ -16,7 +16,7 @@ class Perceptron(object):
         else:
             if len(weights) != self.in_size:
                 raise ArgLenError(weights, self.in_size) #not exactly an appropriate place to use this exception but we should at least raise something
-            self.weights = weights
+            self.weights = weights.copy() #IMPORTANT-- if you don't copy, then it's possible that two perceptrons will use the same list, meaning that changes made by one perceptron will affect both perceptrons
             
     def get_weighted_sum(self, input_acts):
         weighted_sum = 0
@@ -153,9 +153,9 @@ class NeuralNet(object):
                     pseudo_error = 0
                     for i in range(len(next_layer)):
                         pseudo_error += deltas[0][i] * next_layer[i].weights[hidden_neuron_num + 1] #add 1 because bias weight is always in first position-- so 0th neuron gets 1st weight
-                    delta = deriv * error
-                    avg_error += 0.5 * error * error
-                    layer_deltas.append(delta)
+                    delta = deriv * pseudo_error
+                    avg_error += 0.5 * pseudo_error * pseudo_error
+                    layer_deltas.append(delta) #no problems calculating the correct deltas...
 
                 deltas = [layer_deltas] + deltas
 
@@ -165,7 +165,7 @@ class NeuralNet(object):
                     weight_mod = layer[neuron_num].update_weights(all_layer_output[layer_num], alpha, deltas[layer_num][neuron_num])
                     avg_weight_change += weight_mod
                     num_weights += layer[neuron_num].in_size
-                    
+
         avg_error /= (len(examples) * len(examples[0][1]))
         avg_weight_change /= num_weights
         return avg_error, avg_weight_change

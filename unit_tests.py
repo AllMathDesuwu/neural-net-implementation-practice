@@ -120,24 +120,41 @@ class TestNeuralNet(unittest.TestCase):
         hidden_weight = [1, 2, -1, 0.5] #using the same weights for the two hidden perceptrons
         output_weights = [[1, 1, 1], [1, 0, -1], [-1, -1, -1]] #using different weights for three output perceptrons
         test_net = NeuralNet([3, 2, 3], False)
-        for percep in test_net.hidden_layers[0]:
+        for percep in test_net.hidden_layers[0]: #we'll be forcing the perceptrons to use some custom weights for testing purposes
             if (len(percep.weights) != len(hidden_weight)):
                 raise(ArgLenError(percep.weights, hidden_weight))
-            percep.weights = hidden_weight
+            percep.weights = hidden_weight.copy() #note to self-- this is VERY important-- be sure to make a copy of the list (otherwise the list used by the perceptron is the same as the list fed in-- meaning if you feed the same list to two different perceptrons, they both get updated even though you only updated the weights for one perceptron)
         for i in range(len(test_net.output_layer)):
             if (len(test_net.output_layer[i].weights) != len(output_weights)):
                 raise(ArgLenError(test_net.output_layer[i].weights, output_weights))
-            test_net.output_layer[i].weights = output_weights[i]
+            test_net.output_layer[i].weights = output_weights[i].copy()
 
         test_error, test_weight_change = test_net.backpropagation(test_example, 0.1)
+
+        test_sol = [[[0.999676826, 1.999676826, -1.0, 0.500323174], [0.998834962, 1.998834962, -1.0, 0.501165038]], [[1.000283547, 1.000262037, 1.000262037], [1.012008829, 0.011097861, -0.988902139], [-0.995106513, -0.995477724, -0.995477724]]]
+
+        weights_array = list()
         for i in range(len(test_net.hidden_layers[0])):
-            print("Hidden layer perceptron {} weights: ".format(i))
-            print(test_net.hidden_layers[0][i].weights)
-            print("")
+            neuron = test_net.hidden_layers[0][i]
+            for j in range(len(neuron.weights)):
+                neuron.weights[j] = round(neuron.weights[j], 9)
         for i in range(len(test_net.output_layer)):
-            print("Output layer perceptron {} weights: ".format(i))
-            print(test_net.output_layer[i].weights)
-            print("")
-        
+            neuron = test_net.output_layer[i]
+            for j in range(len(neuron.weights)):
+                neuron.weights[j] = round(neuron.weights[j], 9)
+
+        for layer in test_net.layers:
+            layer_weights = list()
+            for percep in layer:
+                layer_weights.append(percep.weights)
+            weights_array.append(layer_weights)
+                
+
+        for i in range(len(test_sol)):
+            for j in range(len(test_sol[i])):
+                for k in range(len(test_sol[i][j])):
+                    with self.subTest(i=k):
+                        self.assertEqual(weights_array[i][j][k], test_sol[i][j][k])
+
 unittest.main()
 
