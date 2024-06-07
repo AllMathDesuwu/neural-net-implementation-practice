@@ -181,6 +181,7 @@ def build_neural_net(examples, alpha = 0.1, weight_change_threshold = 0.00008, h
             hidden_layer_list.append(len(layer))
 
     #print a message about starting training
+    print("Beginning training at " + str(datetime.now()))
     layer_list = [in_len] + hidden_layer_list + [out_len]
     neural_net = NeuralNet(layer_list)
     if start_net is not None:
@@ -194,21 +195,23 @@ def build_neural_net(examples, alpha = 0.1, weight_change_threshold = 0.00008, h
         train_error, weight_mod = neural_net.backpropagation(examples_train, alpha)
         if iteration % 10 == 0:
             #print some message giving an update on training
-            pass
+            print("On iteration {} training error is {} and weight change is {}".format(iteration, train_error, weight_mod))
         iteration += 1
 
     time = datetime.now().time()
     #print some message saying that training's concluded
+    print("Training concluded at " + str(datetime.now()))
 
     test_error = 0
     test_correct = 0
 
+    print("Beginning testing at " + str(datetime.now()) + "...")
     for example in examples_test:
         are_equal = True
         example_features = example[0]
         expected_out = example[1]
         ff_results = neural_net.feed_forward(example_features)[-1]
-        for i in range(expected_out):
+        for i in range(len(expected_out)):
             if round(ff_results[i]) != expected_out[i]:
                 are_equal = False
                 break
@@ -220,5 +223,7 @@ def build_neural_net(examples, alpha = 0.1, weight_change_threshold = 0.00008, h
     test_accuracy = test_correct / len(examples_test)
 
     #print the accuracy of the neural net
+    print("Testing concluded at " + str(datetime.now()))
+    print("Testing accuracy: " + str(test_accuracy))
 
     return neural_net, test_accuracy
