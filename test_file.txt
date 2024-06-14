@@ -1,1 +1,1 @@
-{my_col; str_ord: a, b, c} {my_num; num} {my_num2; num} {my_str: str_unord}
+{my_col; str_ord: a, b, c} {my_num; num} {my_num2; num} {my_str; str_unord}
